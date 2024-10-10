@@ -841,40 +841,6 @@ class DBInconsistenciesPeriodics(SchemaAwarePeriodicsBase):
             txn.add(self._nb_idl.set_router_mac_age_limit())
         raise periodics.NeverAgain()
 
-    # TODO(fnordahl): Remove this in the B+3 cycle. This method removes the
-    # now redundant  "external_ids:OVN_GW_NETWORK_EXT_ID_KEY" and
-    # "external_ids:OVN_GW_PORT_EXT_ID_KEY" from to each router.
-    # A static spacing value is used here, but this method will only run
-    # once per lock due to the use of periodics.NeverAgain().
-    @has_lock_periodic(
-        periodic_run_limit=ovn_const.MAINTENANCE_TASK_RETRY_LIMIT,
-        spacing=ovn_const.MAINTENANCE_ONE_RUN_TASK_SPACING,
-        run_immediately=True)
-    def remove_gw_ext_ids_from_logical_router(self):
-        """Remove `gw_port_id` and `gw_network_id` external_ids from LRs"""
-        cmds = []
-        for lr in self._nb_idl.lr_list().execute(check_error=True):
-            if (ovn_const.OVN_GW_PORT_EXT_ID_KEY not in lr.external_ids and
-                    ovn_const.OVN_GW_NETWORK_EXT_ID_KEY not in
-                    lr.external_ids):
-                # This router have none of the deprecated external_ids.
-                continue
-
-            external_ids = lr.external_ids.copy()
-            for k in (ovn_const.OVN_GW_PORT_EXT_ID_KEY,
-                      ovn_const.OVN_GW_NETWORK_EXT_ID_KEY):
-                if k in external_ids:
-                    del external_ids[k]
-
-            cmds.append(self._nb_idl.db_set(
-                'Logical_Router', lr.uuid, ('external_ids', external_ids)))
-
-        if cmds:
-            with self._nb_idl.transaction(check_error=True) as txn:
-                for cmd in cmds:
-                    txn.add(cmd)
-        raise periodics.NeverAgain()
-
     # A static spacing value is used here, but this method will only run
     # once per lock due to the use of periodics.NeverAgain().
     @has_lock_periodic(
@@ -1324,6 +1290,21 @@ class DBInconsistenciesPeriodics(SchemaAwarePeriodicsBase):
             with self._nb_idl.transaction(check_error=True) as txn:
                 for cmd in cmds:
                     txn.add(cmd)
+        raise periodics.NeverAgain()
+
+    @has_lock_periodic(
+        periodic_run_limit=ovn_const.MAINTENANCE_TASK_RETRY_LIMIT,
+        spacing=ovn_const.MAINTENANCE_ONE_RUN_TASK_SPACING,
+        run_immediately=True)
+    def set_fip_distributed_flag(self):
+        """Set the NB_Global.external_ids:fip-distributed flag."""
+        distributed = ovn_conf.is_ovn_distributed_floating_ip()
+        LOG.debug(
+            "Setting fip-distributed flag in NB_Global to %s", distributed)
+        self._nb_idl.db_set(
+            'NB_Global', '.', external_ids={
+                ovn_const.OVN_FIP_DISTRIBUTED_KEY: str(distributed)}).execute(
+                    check_error=True)
         raise periodics.NeverAgain()
 
 

@@ -32,8 +32,6 @@ OVN_ROUTER_NAME_EXT_ID_KEY = 'neutron:router_name'
 OVN_ROUTER_ID_EXT_ID_KEY = 'neutron:router_id'
 OVN_AZ_HINTS_EXT_ID_KEY = 'neutron:availability_zone_hints'
 OVN_ROUTER_IS_EXT_GW = 'neutron:is_ext_gw'
-OVN_GW_PORT_EXT_ID_KEY = 'neutron:gw_port_id'        # DEPRECATED, DON'T USE
-OVN_GW_NETWORK_EXT_ID_KEY = 'neutron:gw_network_id'  # DEPRECATED, DON'T USE
 OVN_SUBNET_EXT_ID_KEY = 'neutron:subnet_id'
 OVN_SUBNET_EXT_IDS_KEY = 'neutron:subnet_ids'
 OVN_SUBNET_POOL_EXT_ADDR_SCOPE4_KEY = 'neutron:subnet_pool_addr_scope4'
@@ -57,6 +55,7 @@ METADATA_LIVENESS_CHECK_EXT_ID_KEY = 'neutron:metadata_liveness_check_at'
 OVN_PORT_BINDING_PROFILE = portbindings.PROFILE
 OVN_HOST_ID_EXT_ID_KEY = 'neutron:host_id'
 OVN_LRSR_EXT_ID_KEY = 'neutron:is_static_route'
+OVN_FIP_DISTRIBUTED_KEY = 'neutron:fip-distributed'
 
 MIGRATING_ATTR = 'migrating_to'
 OVN_ROUTER_PORT_OPTION_KEYS = ['router-port', 'nat-addresses',
