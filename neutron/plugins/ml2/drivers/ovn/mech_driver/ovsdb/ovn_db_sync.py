@@ -22,6 +22,7 @@ from neutron_lib.plugins import constants as plugin_constants
 from neutron_lib.plugins import directory
 from neutron_lib.utils import helpers
 from oslo_log import log
+from oslo_utils import strutils
 from ovsdbapp.backend.ovs_idl import idlutils
 
 from neutron.common.ovn import acl as acl_utils
@@ -442,7 +443,16 @@ class OvnNbSynchronizer(db_sync_base.BaseOvnDbSynchronizer):
                         ovn_route['nexthop'] == db_route['nexthop']):
                     break
             else:
-                to_remove.append(ovn_route)
+                external_ids = ovn_route.get('external_ids', {})
+
+                #NOTE(tpsilva): only add Neutron-managed routes
+                if (strutils.bool_from_string(
+                    external_ids.get(
+                    ovn_const.OVN_LRSR_EXT_ID_KEY, 'false')) or
+                        strutils.bool_from_string(
+                        external_ids.get(
+                        ovn_const.OVN_ROUTER_IS_EXT_GW, 'false'))):
+                    to_remove.append(ovn_route)
 
         return to_add, to_remove
 

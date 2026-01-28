@@ -687,8 +687,11 @@ def get_lrouter_non_gw_routes(ovn_router):
                 external_ids.get(constants.OVN_ROUTER_IS_EXT_GW, 'false')):
             continue
 
-        routes.append({'destination': route.ip_prefix,
-                       'nexthop': route.nexthop})
+        #NOTE(tpsilva): only add Neutron-managed routes
+        if strutils.bool_from_string(
+                external_ids.get(constants.OVN_LRSR_EXT_ID_KEY, 'false')):
+            routes.append({'destination': route.ip_prefix,
+                           'nexthop': route.nexthop})
     return routes
 
 
