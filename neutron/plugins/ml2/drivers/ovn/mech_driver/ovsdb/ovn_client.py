@@ -2419,6 +2419,7 @@ class OVNClient:
     def _get_ovn_dhcp_options(self, context, subnet, network, server_mac=None):
         external_ids = {
             'subnet_id': subnet['id'],
+            ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: network['id'],
             ovn_const.OVN_REV_NUM_EXT_ID_KEY: str(utils.get_revision_number(
                 subnet, ovn_const.TYPE_SUBNETS))}
         dhcp_options = {'cidr': subnet['cidr'], 'options': {},

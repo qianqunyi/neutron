@@ -167,7 +167,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
             expected_dhcp_options_rows[subnet['id']] = {
                 'cidr': cidr,
-                'external_ids': {'subnet_id': subnet['id']},
+                'external_ids': {
+                    'subnet_id': subnet['id'],
+                    ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id']},
                 'options': options}
 
         for (cidr, enable_dhcp, gateway_ip) in [
@@ -190,7 +192,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
                     options = {'server_id': dhcp_mac[subnet['id']]}
                 expected_dhcp_options_rows[subnet['id']] = {
                     'cidr': cidr,
-                    'external_ids': {'subnet_id': subnet['id']},
+                    'external_ids': {
+                        'subnet_id': subnet['id'],
+                        ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1[
+                            'network']['id']},
                     'options': options}
 
         # create a subnet with dns nameservers and host routes
@@ -210,7 +215,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
                          '10.0.0.8, 0.0.0.0/0,10.0.0.1}')
         expected_dhcp_options_rows[subnet['id']] = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n2['network']['id']},
             'options': {'server_id': '10.0.0.1',
                         'server_mac': dhcp_mac[subnet['id']],
                         'lease_time': str(12 * 60 * 60),
@@ -230,7 +237,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
         expected_dhcp_options_rows[subnet['id']] = {
             'cidr': 'ae10::/64',
-            'external_ids': {'subnet_id': subnet['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n2['network']['id']},
             'options': {'server_id': dhcp_mac[subnet['id']],
                         'dns_server': '{be10::7, be10::8}'}}
 
@@ -304,7 +313,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
         expected_dhcp_options_rows = {
             subnet['id']: {
                 'cidr': '10.0.0.0/24',
-                'external_ids': {'subnet_id': subnet['id']},
+                'external_ids': {
+                    'subnet_id': subnet['id'],
+                    ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id']},
                 'options': {'server_id': '10.0.0.1',
                             'server_mac': dhcp_mac[subnet['id']],
                             'lease_time': str(12 * 60 * 60),
@@ -314,7 +325,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
                             'router': subnet['gateway_ip']}},
             subnet_v6['id']: {
                 'cidr': 'aef0::/64',
-                'external_ids': {'subnet_id': subnet_v6['id']},
+                'external_ids': {
+                    'subnet_id': subnet_v6['id'],
+                    ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id']},
                 'options': {'server_id': dhcp_mac[subnet_v6['id']]}}}
         expected_dhcp_v4_options_rows = {
             subnet['id']: expected_dhcp_options_rows[subnet['id']]}
@@ -336,8 +349,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
         expected_dhcp_options_rows['v4-' + p1['port']['id']] = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id'],
-                             'port_id': p1['port']['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p1['port']['id']},
             'options': {'server_id': '10.0.0.1',
                         'server_mac': dhcp_mac[subnet['id']],
                         'lease_time': str(12 * 60 * 60),
@@ -369,8 +384,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
         expected_dhcp_options_rows['v4-' + p2['port']['id']] = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id'],
-                             'port_id': p2['port']['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p2['port']['id']},
             'options': {'server_id': '10.0.0.1',
                         'server_mac': dhcp_mac[subnet['id']],
                         'lease_time': str(12 * 60 * 60),
@@ -398,8 +415,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
         p3 = self.deserialize(self.fmt, port_res)
         expected_dhcp_options_rows['v6-' + p3['port']['id']] = {
             'cidr': 'aef0::/64',
-            'external_ids': {'subnet_id': subnet_v6['id'],
-                             'port_id': p3['port']['id']},
+            'external_ids': {
+                'subnet_id': subnet_v6['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p3['port']['id']},
             'options': {'server_id': dhcp_mac[subnet_v6['id']],
                         'dns_server': 'aef0::1',
                         'domain_search': 'foo-domain'}}
@@ -425,15 +444,19 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
         p4 = self.deserialize(self.fmt, port_res)
         expected_dhcp_options_rows['v6-' + p4['port']['id']] = {
             'cidr': 'aef0::/64',
-            'external_ids': {'subnet_id': subnet_v6['id'],
-                             'port_id': p4['port']['id']},
+            'external_ids': {
+                'subnet_id': subnet_v6['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p4['port']['id']},
             'options': {'server_id': dhcp_mac[subnet_v6['id']],
                         'dns_server': 'aef0::100',
                         'domain_search': 'bar-domain'}}
         expected_dhcp_options_rows['v4-' + p4['port']['id']] = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id'],
-                             'port_id': p4['port']['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p4['port']['id']},
             'options': {'server_id': '10.0.0.1',
                         'server_mac': dhcp_mac[subnet['id']],
                         'lease_time': str(12 * 60 * 60),
@@ -611,7 +634,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
         expected_dhcp_options_rows = {
             subnet['id']: {
                 'cidr': '10.0.0.0/24',
-                'external_ids': {'subnet_id': subnet['id']},
+                'external_ids': {
+                    'subnet_id': subnet['id'],
+                    ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id']},
                 'options': {'server_id': '10.0.0.1',
                             'server_mac': dhcp_mac[subnet['id']],
                             'lease_time': str(12 * 60 * 60),
@@ -621,7 +646,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
                             'router': subnet['gateway_ip']}},
             subnet_v6['id']: {
                 'cidr': 'aef0::/64',
-                'external_ids': {'subnet_id': subnet_v6['id']},
+                'external_ids': {
+                    'subnet_id': subnet_v6['id'],
+                    ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id']},
                 'options': {'server_id': dhcp_mac[subnet_v6['id']]}}}
 
         data = {
@@ -642,8 +669,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
         expected_dhcp_options_rows['v4-' + p1['id']] = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id'],
-                             'port_id': p1['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p1['id']},
             'options': {'server_id': '10.0.0.1',
                         'server_mac': dhcp_mac[subnet['id']],
                         'lease_time': str(12 * 60 * 60),
@@ -655,8 +684,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
         expected_dhcp_options_rows['v6-' + p1['id']] = {
             'cidr': 'aef0::/64',
-            'external_ids': {'subnet_id': subnet_v6['id'],
-                             'port_id': p1['id']},
+            'external_ids': {
+                'subnet_id': subnet_v6['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p1['id']},
             'options': {'server_id': dhcp_mac[subnet_v6['id']],
                         'dns_server': 'aef0::100'}}
 
@@ -700,8 +731,10 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
 
         expected_dhcp_options_rows['v4-' + p1['id']] = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id'],
-                             'port_id': p1['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                'port_id': p1['id']},
             'options': {'server_id': '10.0.0.1',
                         'server_mac': dhcp_mac[subnet['id']],
                         'lease_time': str(12 * 60 * 60),
@@ -778,7 +811,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
         mtu = str(1480 - cfg.CONF.ml2_type_geneve.max_header_size)
         expected_dhcp_options_rows = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: net['id']},
             'options': {'dns_server': '{10.10.10.10}',
                         'domain_name': '"%s"' % cfg.CONF.dns_domain,
                         'lease_time': '43200',
@@ -801,7 +836,9 @@ class TestNBDbResources(base.TestOVNFunctionalBase):
         # Make sure that domain_name is not included.
         expected_dhcp_options_rows = {
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': subnet['id']},
+            'external_ids': {
+                'subnet_id': subnet['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id']},
             'options': {'dns_server': '{10.10.10.10}',
                         'lease_time': '43200',
                         'mtu': mtu,

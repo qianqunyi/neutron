@@ -537,6 +537,37 @@ class TestMaintenance(_TestMaintenanceHelper):
         ovn_obj = self._find_subnet_row_by_id(neutron_sub['id'])
         self.assertIsNone(ovn_obj.options.get('ntp_server', None))
 
+    def test_check_dhcp_options_consistency(self):
+        neutron_net = self._create_network('dhcp_consistency_net')
+        neutron_sub = self._create_subnet('dhcp_consistency_subnet',
+                                          neutron_net['id'])
+
+        dhcp_row = self._find_subnet_row_by_id(neutron_sub['id'])
+        self.assertIsNotNone(dhcp_row)
+        self.assertEqual(
+            neutron_net['id'],
+            dhcp_row.external_ids.get(ovn_const.OVN_NETWORK_ID_EXT_ID_KEY))
+
+        # Simulate legacy row: remove network_id from external_ids
+        self.nb_api.db_remove(
+            'DHCP_Options', dhcp_row.uuid, 'external_ids',
+            ovn_const.OVN_NETWORK_ID_EXT_ID_KEY).execute(check_error=True)
+
+        dhcp_row = self._find_subnet_row_by_id(neutron_sub['id'])
+        self.assertNotIn(ovn_const.OVN_NETWORK_ID_EXT_ID_KEY,
+                         dhcp_row.external_ids)
+
+        self.assertRaises(periodics.NeverAgain,
+                          self.maint.check_dhcp_options_consistency)
+
+        dhcp_row = self._find_subnet_row_by_id(neutron_sub['id'])
+        self.assertEqual(
+            neutron_net['id'],
+            dhcp_row.external_ids.get(ovn_const.OVN_NETWORK_ID_EXT_ID_KEY))
+
+        # Test original external_ids are not modified
+        self.assertEqual(neutron_sub['id'], dhcp_row.external_ids['subnet_id'])
+
     def test_subnet(self):
         obj_name = 'subnettest'
         neutron_net = self._create_network('network1')

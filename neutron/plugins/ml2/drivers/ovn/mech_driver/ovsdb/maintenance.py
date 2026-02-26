@@ -1121,6 +1121,43 @@ class DBInconsistenciesPeriodics(SchemaAwarePeriodicsBase):
 
         raise periodics.NeverAgain()
 
+    @has_lock_periodic(
+        periodic_run_limit=ovn_const.MAINTENANCE_TASK_RETRY_LIMIT,
+        spacing=ovn_const.MAINTENANCE_ONE_RUN_TASK_SPACING,
+        run_immediately=True)
+    def check_dhcp_options_consistency(self):
+        admin_context = n_context.get_admin_context()
+        cmds = []
+        all_dhcp_options = self._nb_idl.db_list_rows('DHCP_Options').execute(
+            check_error=True)
+        subnet_to_network_map = {
+            subnet['id']: subnet['network_id']
+            for subnet in self._ovn_client._plugin.get_subnets(
+                admin_context, fields=['id', 'network_id'])
+        }
+        for dhcp_options in all_dhcp_options:
+            if (ovn_const.OVN_NETWORK_ID_EXT_ID_KEY in
+                    dhcp_options.external_ids):
+                continue
+            try:
+                subnet_id = dhcp_options.external_ids['subnet_id']
+            except KeyError:
+                LOG.error('DHCP_Options %s have no subnet_id', dhcp_options)
+                continue
+            cmds.append(self._nb_idl.db_set(
+                'DHCP_Options',
+                dhcp_options.uuid,
+                external_ids={
+                    ovn_const.OVN_NETWORK_ID_EXT_ID_KEY:
+                        subnet_to_network_map[subnet_id],
+                }
+            ))
+        if cmds:
+            with self._nb_idl.transaction(check_error=True) as txn:
+                for cmd in cmds:
+                    txn.add(cmd)
+        raise periodics.NeverAgain()
+
 
     # TODO(ralonsoh): to remove in G+4 (2028.1) cycle (2nd next SLURP release)
     @has_lock_periodic(

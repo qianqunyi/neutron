@@ -154,8 +154,10 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
         n1_s3 = self.deserialize(self.fmt, res)
         self.expected_dhcp_options_rows.append({
             'cidr': '10.0.0.0/24',
-            'external_ids': {'subnet_id': n1_s1['subnet']['id'],
-                             ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
+            'external_ids': {
+                'subnet_id': n1_s1['subnet']['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
             'options': {'classless_static_route':
                         '{169.254.169.254/32,10.0.0.2, 0.0.0.0/0,10.0.0.1}',
                         'server_id': '10.0.0.1',
@@ -167,8 +169,10 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                         'router': n1_s1['subnet']['gateway_ip']}})
         self.expected_dhcp_options_rows.append({
             'cidr': '2001:dba::/64',
-            'external_ids': {'subnet_id': n1_s2['subnet']['id'],
-                             ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
+            'external_ids': {
+                'subnet_id': n1_s2['subnet']['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1['network']['id'],
+                ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
             'options': {'server_id': '01:02:03:04:05:06'}})
 
         n1_s1_dhcp_options_uuid = (
@@ -219,9 +223,12 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                 update_port_ids_v6.append(port['port']['id'])
                 self.expected_dhcp_options_rows.append({
                     'cidr': '10.0.0.0/24',
-                    'external_ids': {'subnet_id': n1_s1['subnet']['id'],
-                                     ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
-                                     'port_id': port['port']['id']},
+                    'external_ids': {
+                        'subnet_id': n1_s1['subnet']['id'],
+                        ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1[
+                            'network']['id'],
+                        ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
+                       'port_id': port['port']['id']},
                     'options': {
                         'classless_static_route':
                         '{169.254.169.254/32,10.0.0.2, 0.0.0.0/0,10.0.0.1}',
@@ -235,9 +242,12 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                         'dns_server': '8.8.8.8'}})
                 self.expected_dhcp_options_rows.append({
                     'cidr': '2001:dba::/64',
-                    'external_ids': {'subnet_id': n1_s2['subnet']['id'],
-                                     ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
-                                     'port_id': port['port']['id']},
+                    'external_ids': {
+                        'subnet_id': n1_s2['subnet']['id'],
+                        ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1[
+                            'network']['id'],
+                        ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
+                        'port_id': port['port']['id']},
                     'options': {'server_id': '01:02:03:04:05:06',
                                 'domain_search': 'foo-domain'}})
                 self.dirty_dhcp_options.append({
@@ -280,8 +290,11 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                                 'tftp_server': '"20.0.0.234"',
                                 'domain_name': '"ovn.test"',
                                 'dns_server': '8.8.8.8'},
-                    'external_ids': {'subnet_id': n1_s1['subnet']['id'],
-                                     'port_id': port['port']['id']}})
+                    'external_ids': {
+                        'subnet_id': n1_s1['subnet']['id'],
+                        ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1[
+                            'network']['id'],
+                        'port_id': port['port']['id']}})
             elif p == 'p6':
                 self.delete_lswitch_ports.append((lport_name, lswitch_name))
             elif p == 'p7':
@@ -289,9 +302,12 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                 update_port_ids_v6.append(port['port']['id'])
                 self.expected_dhcp_options_rows.append({
                     'cidr': '10.0.0.0/24',
-                    'external_ids': {'subnet_id': n1_s1['subnet']['id'],
-                                     ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
-                                     'port_id': port['port']['id']},
+                    'external_ids': {
+                        'subnet_id': n1_s1['subnet']['id'],
+                        ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1[
+                            'network']['id'],
+                        ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
+                        'port_id': port['port']['id']},
                     'options': {
                         'classless_static_route':
                         '{169.254.169.254/32,10.0.0.2, 0.0.0.0/0,10.0.0.1}',
@@ -305,9 +321,12 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                         'dns_server': '8.8.8.8'}})
                 self.expected_dhcp_options_rows.append({
                     'cidr': '2001:dba::/64',
-                    'external_ids': {'subnet_id': n1_s2['subnet']['id'],
-                                     ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
-                                     'port_id': port['port']['id']},
+                    'external_ids': {
+                        'subnet_id': n1_s2['subnet']['id'],
+                        ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n1[
+                            'network']['id'],
+                        ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
+                        'port_id': port['port']['id']},
                     'options': {'server_id': '01:02:03:04:05:06',
                                 'domain_search': 'foo-domain'}})
                 self.reset_lport_dhcpv4_options.append(lport_name)
@@ -325,8 +344,10 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
         n2_s2 = self.deserialize(self.fmt, res)
         self.expected_dhcp_options_rows.append({
             'cidr': '20.0.0.0/24',
-            'external_ids': {'subnet_id': n2_s1['subnet']['id'],
-                             ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
+            'external_ids': {
+                'subnet_id': n2_s1['subnet']['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n2['network']['id'],
+                ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
             'options': {'classless_static_route':
                         '{169.254.169.254/32,20.0.0.2, 0.0.0.0/0,20.0.0.1}',
                         'server_id': '20.0.0.1',
@@ -338,8 +359,10 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                         'router': n2_s1['subnet']['gateway_ip']}})
         self.expected_dhcp_options_rows.append({
             'cidr': '2001:dbd::/64',
-            'external_ids': {'subnet_id': n2_s2['subnet']['id'],
-                             ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
+            'external_ids': {
+                'subnet_id': n2_s2['subnet']['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n2['network']['id'],
+                ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
             'options': {'server_id': '01:02:03:04:05:06'}})
 
         for p in ['p1', 'p2']:
@@ -351,6 +374,8 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                 self.expected_dhcp_options_rows.append({
                     'cidr': '20.0.0.0/24',
                     'external_ids': {'subnet_id': n2_s1['subnet']['id'],
+                                     ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n2[
+                                        'network']['id'],
                                      ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0',
                                      'port_id': port['port']['id']},
                     'options': {
@@ -718,8 +743,10 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
             dhcp_mac_v6 = '01:02:03:04:05:06'
         self.expected_dhcp_options_rows.append({
             'cidr': '30.0.0.0/24',
-            'external_ids': {'subnet_id': n3_s1['subnet']['id'],
-                             ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
+            'external_ids': {
+                'subnet_id': n3_s1['subnet']['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n3['network']['id'],
+                ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
             'options': {'classless_static_route':
                         '{169.254.169.254/32,30.0.0.2, 0.0.0.0/0,30.0.0.1}',
                         'server_id': '30.0.0.1',
@@ -731,8 +758,10 @@ class TestOvnNbSync(base.TestOVNFunctionalBase):
                         'router': n3_s1['subnet']['gateway_ip']}})
         self.expected_dhcp_options_rows.append({
             'cidr': '2001:dbc::/64',
-            'external_ids': {'subnet_id': n3_s2['subnet']['id'],
-                             ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
+            'external_ids': {
+                'subnet_id': n3_s2['subnet']['id'],
+                ovn_const.OVN_NETWORK_ID_EXT_ID_KEY: n3['network']['id'],
+                ovn_const.OVN_REV_NUM_EXT_ID_KEY: '0'},
             'options': {'server_id': dhcp_mac_v6}})
         fake_port_id1 = uuidutils.generate_uuid()
         fake_port_id2 = uuidutils.generate_uuid()
