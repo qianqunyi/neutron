@@ -264,13 +264,16 @@ class SubnetPoolReader:
         self._sp_helper = SubnetPoolHelper()
         self._read_id(subnetpool)
         self._read_prefix_bounds(subnetpool)
+        # TODO(ralonsoh): "tenant_id" reference should be removed
+        self.project_id = (subnetpool.get('project_id') or
+                           subnetpool.get('tenant_id'))
         self._read_attrs(subnetpool,
-                         ['tenant_id', 'name', 'is_default', 'shared'])
+                         ['name', 'is_default', 'shared'])
         self.description = subnetpool.get('description')
         self._read_address_scope(subnetpool)
         self.subnetpool = {'id': self.id,
                            'name': self.name,
-                           'project_id': self.tenant_id,
+                           'project_id': self.project_id,
                            'prefixes': self.prefixes,
                            'min_prefix': self.min_prefix,
                            'min_prefixlen': self.min_prefixlen,
