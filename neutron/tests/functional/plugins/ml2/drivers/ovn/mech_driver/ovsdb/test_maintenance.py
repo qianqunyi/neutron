@@ -836,7 +836,8 @@ class TestMaintenance(_TestMaintenanceHelper):
         ls = self.nb_api.get_lswitch(utils.ovn_name(net['id']))
 
         self.assertEqual(
-            '0', ls.other_config.get(ovn_const.LS_OPTIONS_FDB_AGE_THRESHOLD))
+            str(ovn_const.FDB_AGE_THRESHOLD_DEFAULT),
+            ls.other_config.get(ovn_const.LS_OPTIONS_FDB_AGE_THRESHOLD))
 
         self.assertEqual(
             '0', self.nb_api.nb_global.options.get("fdb_removal_limit", '0'))

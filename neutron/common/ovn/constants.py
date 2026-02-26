@@ -430,6 +430,7 @@ BRIDGE_REDIRECT_TYPE = "bridged"
 
 # FDB AGE Settings
 LS_OPTIONS_FDB_AGE_THRESHOLD = 'fdb_age_threshold'
+FDB_AGE_THRESHOLD_DEFAULT = 300
 
 LS_OPTIONS_BROADCAST_ARPS_ROUTERS = 'broadcast-arps-to-all-routers'
 

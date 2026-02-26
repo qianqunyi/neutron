@@ -207,10 +207,10 @@ ovn_opts = [
                        'newer.')),
     cfg.IntOpt('fdb_age_threshold',
                min=0,
-               default=0,
+               default=ovn_const.FDB_AGE_THRESHOLD_DEFAULT,
                help=_('The number of seconds to keep FDB entries in the OVN '
-                      'DB. The value defaults to 0, which means disabled. '
-                      'This is supported by OVN >= 23.09.')),
+                      'DB. A value of 0 means disabled. This is supported by '
+                      'OVN >= 23.09.')),
     cfg.IntOpt('mac_binding_age_threshold',
                min=0,
                default=0,
