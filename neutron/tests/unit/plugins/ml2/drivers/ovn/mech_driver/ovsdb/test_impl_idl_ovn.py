@@ -549,7 +549,9 @@ class TestNBImplIdlOvn(TestDBImplIdlOvn):
                                'orp-id-a2': ['10.0.2.0/24'],
                                'orp-id-a3': ['10.0.3.0/24']},
                      'static_routes': [{'destination': '20.0.0.0/16',
-                                        'nexthop': '10.0.3.253'}],
+                                        'nexthop': '10.0.3.253',
+                                        'external_ids': {
+                                            'neutron:subnet_id': 'uuid_1'}}],
                      'snats': [{'external_ip': '10.0.3.1',
                                 'logical_ip': '20.0.0.0/16',
                                 'type': 'snat'}],
@@ -558,7 +560,9 @@ class TestNBImplIdlOvn(TestDBImplIdlOvn):
                      'ports': {'xrp-id-b1': ['20.0.1.0/24'],
                                'orp-id-b2': ['20.0.2.0/24']},
                      'static_routes': [{'destination': '10.0.0.0/16',
-                                        'nexthop': '20.0.2.253'}],
+                                        'nexthop': '20.0.2.253',
+                                        'external_ids': {
+                                            'neutron:subnet_id': 'uuid_2'}}],
                      'snats': [{'external_ip': '20.0.2.1',
                                 'logical_ip': '10.0.0.0/24',
                                 'type': 'snat'}],

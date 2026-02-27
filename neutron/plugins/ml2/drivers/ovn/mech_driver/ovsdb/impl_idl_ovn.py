@@ -348,7 +348,11 @@ class OvsdbNbOvnIdl(nb_impl_idl.OvnNbApiIdlImpl, Backend):
                 if ovn_const.OVN_ROUTER_NAME_EXT_ID_KEY in lrport.external_ids
             }
             sroutes = [
-                {'destination': route.ip_prefix, 'nexthop': route.nexthop}
+                {
+                    'destination': route.ip_prefix,
+                    'nexthop': route.nexthop,
+                    'external_ids': route.external_ids
+                }
                 for route in getattr(lrouter, 'static_routes', [])
                 if any(eid.startswith(constants.DEVICE_OWNER_NEUTRON_PREFIX)
                        for eid in route.external_ids)
